@@ -1,10 +1,14 @@
 import cv2
 import numpy as np
-
+import math
+from util import stackImages
 
 def nothing(x):
     pass
 
+
+def calculateDistance(pt1, pt2):
+    return math.sqrt((pt2[1] - pt1[1]) ** 2 + (pt2[0] - pt1[0]) ** 2)
 
 
 def arrangePoints(pts):
@@ -26,6 +30,7 @@ def main():
     cap = cv2.VideoCapture(0)
 
     # Read Resources
+    frameSize = 250
     resizeFactor = 16
     imgSala = cv2.imread("resources/Sala.png")
     imgSala = cv2.resize(imgSala, (imgSala.shape[1] // resizeFactor, imgSala.shape[0] // resizeFactor))
@@ -42,7 +47,7 @@ def main():
     while True:
 
         _, img = cap.read()
-        img = cv2.resize(img, (img.shape[1] // 2, img.shape[0] // 2))
+        # img = cv2.resize(img, (img.shape[1] // 2, img.shape[0] // 2))
 
         imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -50,25 +55,62 @@ def main():
 
         contours, _ = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+        whiteFrame = np.zeros((frameSize, frameSize))
+        drawFrame = np.zeros_like(whiteFrame)
+
         for cnt in contours:
             area = cv2.contourArea(cnt)
             if area > 100:
                 perimeter = cv2.arcLength(cnt, True)
                 approx = cv2.approxPolyDP(cnt, perimeter * 0.02, True)
                 if len(approx) == 4:  # Need to find the aspect ratio
-                    x = approx[0][0][0]
-                    y = approx[2][0][1]
-                    aspectRatio = y / x
-                    if aspectRatio > 0.8:
 
-                        points = arrangePoints(approx)
+                    points = arrangePoints(approx)
+                    # print(points[0][0], points[1][0], points[2][0])
+                    w, h = calculateDistance(points[0][0], points[1][0]), calculateDistance(points[0][0], points[2][0])
+                    # print(w, h)
+                    if w == 0 or h == 0: continue
+                    aspectRatio = w / h
+                    if aspectRatio > 0.90:
+                        src = np.float32(points)
+                        dst = np.float32([[0, 0], [frameSize, 0], [0, frameSize], [frameSize, frameSize]])
+                        transform = cv2.getPerspectiveTransform(src, dst)
+                        whiteFrame = cv2.warpPerspective(imgThresh, transform, (frameSize, frameSize))
+
+                        # Find Contours again
+                        imgInvThresh = (255 - whiteFrame)
+                        imgInvThresh = imgInvThresh[20:imgInvThresh.shape[1] - 20, 20 : imgInvThresh.shape[0] - 20]
+                        figureContours, _ = cv2.findContours(imgInvThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                        cv2.drawContours(drawFrame, figureContours, -1, (255, 0, 0), 5)
+                        # print(len(figureContours))
+
+
+                        # Drawing
+                        figures = len(figureContours)
                         cv2.polylines(img, points, True, (0, 255, 0), 7, cv2.LINE_AA)
-                        cv2.putText(img, "Detected", (points[0][0][0], points[0][0][1]), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                                    (255, 0, 0), 3)
+                        cv2.putText(img, f"Frame Detected. {figures} Figures Detected",
+                                    (points[0][0][0], points[0][0][1]), cv2.FONT_HERSHEY_SIMPLEX,
+                                    1, (255, 119, 15), 3)
+
+                        if figures == 2:
+                            cv2.putText(img, "Pasillo",
+                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        1, (0, 255, 0), 3)
+                        if figures == 3:
+                            cv2.putText(img, "Sala",
+                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        1, (0, 255, 0), 3)
+                        if figures == 4:
+                            cv2.putText(img, "Cocina",
+                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        1, (0, 255, 0), 3)
 
 
-        cv2.imshow("Thresh", imgThresh)
-        cv2.imshow("c", img)
+
+        cv2.imshow("Threshold", imgThresh)
+        cv2.imshow("Camera", img)
+        cv2.imshow("White Frame", whiteFrame)
+        cv2.imshow("Draw Frame", drawFrame)
 
         # Nopeeee
         # mask = (255 - imgSala)
