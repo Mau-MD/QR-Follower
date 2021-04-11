@@ -32,9 +32,7 @@ def main():
     # Read Resources
     frameSize = 250
     resizeFactor = 16
-    imgSala = cv2.imread("resources/Sala.png")
-    imgSala = cv2.resize(imgSala, (imgSala.shape[1] // resizeFactor, imgSala.shape[0] // resizeFactor))
-    imgSala = imgSala[10:2500 // resizeFactor - 5, 10:imgSala.shape[1] - 10]
+
 
     while True:
 
