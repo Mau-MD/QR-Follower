@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-from util import stackImages
+
 
 def nothing(x):
     pass
@@ -89,20 +89,23 @@ def main():
                         figures = len(figureContours)
                         cv2.polylines(img, points, True, (0, 255, 0), 7, cv2.LINE_AA)
                         cv2.putText(img, f"Frame Detected. {figures} Figures Detected",
-                                    (points[0][0][0], points[0][0][1]), cv2.FONT_HERSHEY_SIMPLEX,
+                                    (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
                                     1, (255, 119, 15), 3)
+                        cv2.putText(img, f"Area: {area}",
+                                    (points[0][0][0], points[0][0][1]), cv2.FONT_HERSHEY_SIMPLEX,
+                                    1, (255, 200, 15), 3)
 
                         if figures == 2:
                             cv2.putText(img, "Pasillo",
-                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        (points[0][0][0], points[0][0][1] - 80), cv2.FONT_HERSHEY_SIMPLEX,
                                         1, (0, 255, 0), 3)
                         if figures == 3:
                             cv2.putText(img, "Sala",
-                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        (points[0][0][0], points[0][0][1] - 80), cv2.FONT_HERSHEY_SIMPLEX,
                                         1, (0, 255, 0), 3)
                         if figures == 4:
                             cv2.putText(img, "Cocina",
-                                        (points[0][0][0], points[0][0][1] - 40), cv2.FONT_HERSHEY_SIMPLEX,
+                                        (points[0][0][0], points[0][0][1] - 80), cv2.FONT_HERSHEY_SIMPLEX,
                                         1, (0, 255, 0), 3)
 
 
