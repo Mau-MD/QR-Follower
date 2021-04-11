@@ -36,14 +36,6 @@ def main():
     imgSala = cv2.resize(imgSala, (imgSala.shape[1] // resizeFactor, imgSala.shape[0] // resizeFactor))
     imgSala = imgSala[10:2500 // resizeFactor - 5, 10:imgSala.shape[1] - 10]
 
-    # cv2.namedWindow("Trackbars",)
-    # cv2.createTrackbar("lh","Trackbars",0,179,nothing)
-    # cv2.createTrackbar("ls","Trackbars",0,255,nothing)
-    # cv2.createTrackbar("lv","Trackbars",0,255,nothing)
-    # cv2.createTrackbar("uh","Trackbars",179,179,nothing)
-    # cv2.createTrackbar("us","Trackbars",255,255,nothing)
-    # cv2.createTrackbar("uv","Trackbars",255,255,nothing)
-
     while True:
 
         _, img = cap.read()
@@ -108,64 +100,10 @@ def main():
                                         (points[0][0][0], points[0][0][1] - 80), cv2.FONT_HERSHEY_SIMPLEX,
                                         1, (0, 255, 0), 3)
 
-
-
         cv2.imshow("Threshold", imgThresh)
         cv2.imshow("Camera", img)
         cv2.imshow("White Frame", whiteFrame)
         cv2.imshow("Draw Frame", drawFrame)
-
-        # Nopeeee
-        # mask = (255 - imgSala)
-        # match = cv2.matchTemplate(img, imgSala, cv2.TM_SQDIFF, mask=mask)
-        # # cv2.normalize(match, match, 0 , 1, cv2.NORM_MINMAX, -1)
-        #
-        # minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(match)
-        # matchLoc = minLoc
-        #
-        # cv2.rectangle(img, matchLoc, (matchLoc[0] + 20, matchLoc[1] + 20), (255, 0 , 0), 3)
-        #
-        # cv2.imshow("img", img)
-
-        # Nope
-        # imgHSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        #
-        # lh = cv2.getTrackbarPos("lh","Trackbars")
-        # ls = cv2.getTrackbarPos("ls","Trackbars")
-        # lv = cv2.getTrackbarPos("lv","Trackbars")
-        # uh = cv2.getTrackbarPos("uh","Trackbars")
-        # us = cv2.getTrackbarPos("us","Trackbars")
-        # uv = cv2.getTrackbarPos("uv","Trackbars")
-        #
-        # lower_gray = np.array([lh, ls, lv], np.uint8)
-        # upper_gray = np.array([uh, us, uv], np.uint8)
-        #
-        # mask_gray = cv2.inRange(imgHSV, lower_gray, upper_gray)
-        # mask_gray = (255 - mask_gray)
-        # cv2.imshow("gray", mask_gray)
-
-        # Didn't work either
-        # res = cv2.matchTemplate(img, imgSala, cv2.TM_CCOEFF)
-        # min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        #
-        # top_left = max_loc
-        # bottom_right = (top_left[0] + 100, top_left[1] + 100)
-        #
-        # cv2.rectangle(img, top_left, bottom_right, 255, 2)
-        # cv2.imshow("Template", img)
-
-        # Didn't work
-        # orb = cv2.ORB_create(nfeatures=10)
-        # kp1, des1 = orb.detectAndCompute(img, None)
-        # kp2, des2 = orb.detectAndCompute(imgSala, None)
-        #
-        # bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        # matches = bf.match(des1, des2)
-        # matches = sorted(matches, key=lambda x: x.distance)
-        #
-        # match_img = cv2.drawMatches(img, kp1, imgSala, kp2, matches[:50], None)
-        #
-        # cv2.imshow("Matches", match_img)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
