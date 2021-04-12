@@ -11,7 +11,7 @@ def show_images(frames, size=1):
         i += 1
 
 
-def is_a_square(pts):
+def is_square(pts):
     points = mf.arrange_points(pts)
     w, h = mf.calculate_distance(points[0][0], points[1][0]), mf.calculate_distance(points[0][0], points[2][0])
     if w == 0 or h == 0:
@@ -19,6 +19,7 @@ def is_a_square(pts):
     aspect_ratio = w / h
     if aspect_ratio > 0.90:
         return True
+    return False
 
 
 def warp_image(img, src, frame):
@@ -51,7 +52,7 @@ def find_contours(img, max_area=1000, poly=4, square=False):
 
             if poly != 0:
                 if len(approx) == poly:
-                    if not square or (square and is_a_square(approx)):
+                    if not square or (square and is_square(approx)):
                         contours_list.append((cnt, approx))
             else:
                 contours_list.append((cnt, approx))

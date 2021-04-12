@@ -43,3 +43,5 @@ class QrDetector:
 
         cv2.imshow("a", frame)
         cv2.imshow("b", img)
+        cv2.imshow("c", img_thresh)
+
