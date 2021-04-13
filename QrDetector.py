@@ -34,12 +34,21 @@ class QrDetector:
             frame_inv = cf.crop_square(frame_inv, 20)
 
             shapes = len(cf.find_contours(frame_inv, 0, 0))
+            place = ""
+            if shapes == 2:
+                place = "Pasillo"
+            elif shapes == 3:
+                place = "Sala"
+            else:
+                place = "Cocina"
             printer.print_poly(img, pts, thickness=8)
             printer.print_text(img,
-                               pts[0][0],
+                               pts[0][0] - 40,
                                40,
                                ("Frame detected", (255, 0, 0), 3),
-                               (f"{shapes} detected", (0, 255, 0), 3))
+                               (f"{shapes} detected", (0, 255, 0), 3),
+                               (f"{place}", (0,0,255), 3))
+
 
         cv2.imshow("a", frame)
         cv2.imshow("b", img)
